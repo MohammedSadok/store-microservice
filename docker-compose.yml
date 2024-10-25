@@ -1,0 +1,20 @@
+services:
+  product-db:
+    image: postgres:latest
+    container_name: product-db
+    environment:
+      POSTGRES_USER: sadok
+      POSTGRES_PASSWORD: sadok
+      POSTGRES_DB: product
+    ports:
+      - "5432:5432"
+    volumes:
+      - product_data:/var/lib/postgresql/data
+    networks:
+      - product_network
+
+volumes:
+  product_data:
+
+networks:
+  product_network:
