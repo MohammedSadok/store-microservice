@@ -11,10 +11,41 @@ services:
     volumes:
       - product_data:/var/lib/postgresql/data
     networks:
-      - product_network
+      - market-network
+
+  customer-db:
+    image: postgres:latest
+    container_name: customer-db
+    environment:
+      POSTGRES_USER: sadok
+      POSTGRES_PASSWORD: sadok
+      POSTGRES_DB: customer
+    ports:
+      - "5433:5432"
+    volumes:
+      - customer_data:/var/lib/postgres/data
+    networks:
+      - market-network
+
+  order-db:
+    image: postgres:latest
+    container_name: order-db
+    environment:
+      POSTGRES_USER: sadok
+      POSTGRES_PASSWORD: sadok
+      POSTGRES_DB: order
+    ports:
+      - "5434:5432"
+    volumes:
+      - order_data:/var/lib/postgres/data
+    networks:
+      - market-network
 
 volumes:
   product_data:
+  customer_data:
+  order_data:
 
 networks:
-  product_network:
+  market-network:
+    driver: bridge
