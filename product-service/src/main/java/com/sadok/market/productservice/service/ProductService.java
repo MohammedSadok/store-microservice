@@ -11,7 +11,7 @@ public interface ProductService {
 
     List<Product> getAllProducts();
 
-    Optional<Product> getProductById(Integer id);
+    Product getProductById(Integer id);
 
     Product createProduct(Product product);
 

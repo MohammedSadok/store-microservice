@@ -2,6 +2,7 @@ package com.sadok.market.productservice.service;
 
 
 import com.sadok.market.productservice.entity.Product;
+import com.sadok.market.productservice.exception.ProductNotFoundException;
 import com.sadok.market.productservice.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,8 +19,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Optional<Product> getProductById(Integer id) {
-        return productRepository.findById(id);
+    public Product getProductById(Integer id) {
+        return productRepository.findById(id).orElseThrow(
+                () -> new ProductNotFoundException("Product with id " + id + " not found")
+        );
     }
 
     @Override
