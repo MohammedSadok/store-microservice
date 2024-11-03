@@ -6,7 +6,8 @@ spring:
       server:
         git:
           uri: https://github.com/MohammedSadok/config-repo-micro-store
-
+          clone-on-start: true
+          default-label: main
 server:
   port: 8888
 

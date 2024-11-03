@@ -47,7 +47,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             WebRequest request) {
         return createErrorResponse(
                 ex.getMessage(),
-                HttpStatus.NOT_FOUND,
+                HttpStatus.BAD_REQUEST,
                 request
         );
     }

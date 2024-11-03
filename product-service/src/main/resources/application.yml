@@ -2,17 +2,12 @@ spring:
   application:
     name: product-service
   config:
-    import: optional:configserver:http://localhost:8888
+    import: optional:configserver:${CONFIG_SERVICE_URL:http://localhost:8888}
+#  boot:
+#    admin:
+#      client:
+#        url: http://localhost:8070
 
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/product
-    username: sadok
-    password: sadok
-  jpa:
-    hibernate:
-      ddl-auto: update
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
 
 server:
   port: 8081
