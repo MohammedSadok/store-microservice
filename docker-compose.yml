@@ -8,125 +8,138 @@ services:
       POSTGRES_DB: product
     ports:
       - "5432:5432"
+    expose:
+      - '5432'
     volumes:
       - product_data:/var/lib/postgresql/data
     networks:
       - market-network
 
-  customer-db:
-    image: postgres:latest
-    container_name: customer-db
-    environment:
-      POSTGRES_USER: sadok
-      POSTGRES_PASSWORD: sadok
-      POSTGRES_DB: customer
+  #  customer-db:
+  #    image: postgres:latest
+  #    container_name: customer-db
+  #    environment:
+  #      POSTGRES_USER: sadok
+  #      POSTGRES_PASSWORD: sadok
+  #      POSTGRES_DB: customer
+  #    ports:
+  #      - "5433:5432"
+  #    volumes:
+  #      - customer_data:/var/lib/postgresql/data
+  #    networks:
+  #      - market-network
+  #
+  #  order-db:
+  #    image: postgres:latest
+  #    container_name: order-db
+  #    environment:
+  #      POSTGRES_USER: sadok
+  #      POSTGRES_PASSWORD: sadok
+  #      POSTGRES_DB: order
+  #    ports:
+  #      - "5434:5432"
+  #    volumes:
+  #      - order_data:/var/lib/postgresql/data
+  #    networks:
+  #      - market-network
+  #
+  #  discovery-service:
+  #    build: ./discovery-service
+  #    container_name: discovery-service
+  #    ports:
+  #      - "8761:8761"
+  #    expose:
+  #      - "8761"  # Expose the port to other services on the network
+  #    healthcheck:
+  #      test: [ "CMD", "curl", "-f", "http://localhost:8761/actuator/health" ]
+  #      interval: 5s
+  #      retries: 4
+  #    networks:
+  #      - market-network
+  #
+  #  config-service:
+  #    build: ./config-service
+  #    container_name: config-service
+  #    ports:
+  #      - "8888:8888"
+  #    expose:
+  #      - "8888"
+  #    environment:
+  #      - DISCOVERY_SERVICE_URL=http://discovery-service:8761/eureka
+  #    healthcheck:
+  #      test: [ "CMD", "curl", "-f", "http://localhost:8888/actuator/health" ]
+  #      interval: 5s
+  #      retries: 4
+  #    depends_on:
+  #      discovery-service:
+  #        condition: service_healthy
+  #    networks:
+  #      - market-network
+  #
+  #  gateway-service:
+  #    build: ./gateway-service
+  #    container_name: gateway-service
+  #    ports:
+  #      - "8088:8088"
+  #    expose:
+  #      - "8088"
+  #    environment:
+  #      - CONFIG_SERVICE_URL=http://config-service:8888
+  #      - DISCOVERY_SERVICE_URL=http://discovery-service:8761/eureka
+  #    healthcheck:
+  #      test: [ "CMD", "curl", "-f", "http://localhost:8088/actuator/health" ]
+  #      interval: 5s
+  #      retries: 4
+  #    depends_on:
+  #      config-service:
+  #        condition: service_healthy
+  #    networks:
+  #      - market-network
+  #
+  #  config-server:
+  #    build: ./config-server
+  #    container_name: config-server
+  #    ports:
+  #      - "8070:8070"
+  #    environment:
+  #      - CONFIG_SERVICE_URL=http://config-service:8888
+  #      - DISCOVERY_SERVICE_URL=http://discovery-service:8761/eureka
+  #    healthcheck:
+  #      test: [ "CMD", "curl", "-f", "http://localhost:8070/actuator/health" ]
+  #      interval: 10s
+  #      retries: 4
+  #    depends_on:
+  #      gateway-service:
+  #        condition: service_healthy
+  #    networks:
+  #      - market-network
+
+  product-service:
+    build: ./product-service
+    container_name: product-service
     ports:
-      - "5433:5432"
-    volumes:
-      - customer_data:/var/lib/postgresql/data
+      - "8081:8081"
+    expose:
+      - '8081'
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://product-db:5432/product
+      - POSTGRES_HOST=product-db
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=product
+      - POSTGRES_USER=sadok
+      - POSTGRES_PASSWORD=sadok
+      - CONFIG_SERVICE_URL=http://config-service:8888
+      - DISCOVERY_SERVICE_URL=http://discovery-service:8761/eureka
+      - PRODUCT_DATABASE_URL=jdbc:postgresql://product-db:5432/product
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8081/actuator/health" ]
+      interval: 10s
+      retries: 4
+    depends_on:
+      product-db:
+        condition: service_healthy
     networks:
       - market-network
-
-  order-db:
-    image: postgres:latest
-    container_name: order-db
-    environment:
-      POSTGRES_USER: sadok
-      POSTGRES_PASSWORD: sadok
-      POSTGRES_DB: order
-    ports:
-      - "5434:5432"
-    volumes:
-      - order_data:/var/lib/postgresql/data
-    networks:
-      - market-network
-
-#  discovery-service:
-#    build: ./discovery-service
-#    container_name: discovery-service
-#    ports:
-#      - "8761:8761"
-#    expose:
-#      - "8761"  # Expose the port to other services on the network
-#    healthcheck:
-#      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
-#      interval: 5s
-#      retries: 4
-#    networks:
-#      - market-network
-#
-#  config-service:
-#    build: ./config-service
-#    container_name: config-service
-#    ports:
-#      - "8888:8888"
-#    expose:
-#      - "8888"
-#    environment:
-#      - DISCOVERY_SERVICE_URL=http://discovery-service:8761/eureka
-#    healthcheck:
-#      test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
-#      interval: 5s
-#      retries: 4
-#    depends_on:
-#      discovery-service:
-#        condition: service_healthy
-#    networks:
-#      - market-network
-#
-#  gateway-service:
-#    build: ./gateway-service
-#    container_name: gateway-service
-#    ports:
-#      - "8088:8088"
-#    expose:
-#      - "8088"
-#    environment:
-#      - CONFIG_SERVICE_URL=http://config-service:8888
-#      - DISCOVERY_SERVICE_URL=http://discovery-service:8761/eureka
-#    healthcheck:
-#      test: ["CMD", "curl", "-f", "http://localhost:8088/actuator/health"]
-#      interval: 5s
-#      retries: 4
-#    depends_on:
-#      config-service:
-#        condition: service_healthy
-#    networks:
-#      - market-network
-
-#  config-server:
-#    build: ./config-server
-#    container_name: config-server
-#    ports:
-#      - "8070:8070"
-#    environment:
-#      DISCOVERY_SERVICE_URL: http://discovery-service:8761/eureka
-#    healthcheck:
-#      test: [ "CMD", "curl", "-f", "http://localhost:8070/actuator/health" ]
-#      interval: 10s
-#      retries: 4
-#    depends_on:
-#      gateway-service:
-#        condition: service_healthy
-#    networks:
-#      - market-network
-#
-#  product-service:
-#    build: ./product-service
-#    container_name: product-service
-#    ports:
-#      - "8081:8081"
-#    environment:
-#      DISCOVERY_SERVICE_URL: http://discovery-service:8761/eureka
-#    healthcheck:
-#      test: [ "CMD", "curl", "-f", "http://localhost:8081/actuator/health" ]
-#      interval: 10s
-#      retries: 4
-#    depends_on:
-#      config-server:
-#        condition: service_healthy
-#    networks:
-#      - market-network
 
 volumes:
   product_data:
