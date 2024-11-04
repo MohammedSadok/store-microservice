@@ -3,6 +3,11 @@ spring:
     name: order-service
   config:
     import: optional:configserver:${CONFIG_SERVICE_URL:http://localhost:8888}
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5434/order}
+    username: ${SPRING_DATASOURCE_USERNAME:sadok}
+    password: ${SPRING_DATASOURCE_PASSWORD:sadok}
+    driver-class-name: org.postgresql.Driver
 eureka:
   client:
     service-url:

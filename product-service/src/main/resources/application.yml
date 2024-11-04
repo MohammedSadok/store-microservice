@@ -4,20 +4,15 @@ spring:
   config:
     import: optional:configserver:${CONFIG_SERVICE_URL:http://localhost:8888}
   datasource:
-    url: jdbc:postgresql://${POSTGRES_HOST:product-db}:${POSTGRES_PORT:5432}/${POSTGRES_DB:product}
-    username: ${POSTGRES_USER:sadok}
-    password: ${POSTGRES_PASSWORD:sadok}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/product}
+    username: ${SPRING_DATASOURCE_USERNAME:sadok}
+    password: ${SPRING_DATASOURCE_PASSWORD:sadok}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
       ddl-auto: create
     show-sql: true
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-  cloud:
-    config:
-      enabled: false
-    discovery:
-      enabled: false
 eureka:
   client:
     service-url:
